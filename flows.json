@@ -1,0 +1,360 @@
+[
+    {
+        "id": "d65d26390267d08c",
+        "type": "tab",
+        "label": "Servo Control with Send"
+    },
+    {
+        "id": "75d2e00c72b5ac3d",
+        "type": "ui_slider",
+        "z": "d65d26390267d08c",
+        "name": "Servo 1 Slider",
+        "label": "Servo 1",
+        "group": "group1",
+        "order": 1,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "topic": "servo1",
+        "min": 0,
+        "max": 180,
+        "step": 1,
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "652f4ce0f51fba6d"
+            ]
+        ]
+    },
+    {
+        "id": "5378537f83a19759",
+        "type": "ui_slider",
+        "z": "d65d26390267d08c",
+        "name": "Servo 2 Slider",
+        "label": "Servo 2",
+        "group": "group1",
+        "order": 2,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "topic": "servo2",
+        "min": 0,
+        "max": 180,
+        "step": 1,
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "652f4ce0f51fba6d"
+            ]
+        ]
+    },
+    {
+        "id": "652f4ce0f51fba6d",
+        "type": "function",
+        "z": "d65d26390267d08c",
+        "name": "Store Slider Angles",
+        "func": "flow.set(msg.topic, msg.payload);\nreturn null;",
+        "outputs": 1,
+        "x": 380,
+        "y": 90,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3ce8ee65b0fa9ed7",
+        "type": "ui_button",
+        "z": "d65d26390267d08c",
+        "name": "Send Button",
+        "group": "group1",
+        "order": 3,
+        "width": 6,
+        "height": 1,
+        "label": "Send",
+        "topic": "send",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "801c65e6d1a4a622"
+            ]
+        ]
+    },
+    {
+        "id": "801c65e6d1a4a622",
+        "type": "function",
+        "z": "d65d26390267d08c",
+        "name": "Send Angles",
+        "func": "if (msg.topic === \"home\")\n{\n    msg.payload = \"90,90\\n\";\n    return msg;\n}\n\nlet angle1 = flow.get(\"servo1\");\nlet angle2 = flow.get(\"servo2\");\n\nif (angle1 !== undefined && angle2 !== undefined) {\n    return [\n        { payload: `${angle1},${angle2}\\n` }\n    ];\n}\nreturn null;",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 180,
+        "wires": [
+            [
+                "2d96d3c36ae65307"
+            ],
+            [
+                "2d96d3c36ae65307"
+            ]
+        ]
+    },
+    {
+        "id": "2d96d3c36ae65307",
+        "type": "serial out",
+        "z": "d65d26390267d08c",
+        "name": "To Arduino",
+        "serial": "54d7d3294c155225",
+        "x": 600,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "7772bab7aa3d2f15",
+        "type": "serial in",
+        "z": "d65d26390267d08c",
+        "name": "",
+        "serial": "serial-conf",
+        "x": 110,
+        "y": 460,
+        "wires": [
+            [
+                "4e9c1cc1c32f460c",
+                "7a7d237b2c451ffa",
+                "f5e0b34f63087818"
+            ]
+        ]
+    },
+    {
+        "id": "4b7c6c17c9324d1e",
+        "type": "debug",
+        "z": "d65d26390267d08c",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "4e9c1cc1c32f460c",
+        "type": "function",
+        "z": "d65d26390267d08c",
+        "name": "servo1Pos",
+        "func": "msg.payload = msg.payload.split(\",\")[0];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 300,
+        "wires": [
+            [
+                "4b7c6c17c9324d1e",
+                "1c4e0dca40a215ac",
+                "75d2e00c72b5ac3d"
+            ]
+        ]
+    },
+    {
+        "id": "7a7d237b2c451ffa",
+        "type": "function",
+        "z": "d65d26390267d08c",
+        "name": "servo2Pos",
+        "func": "msg.payload = msg.payload.split(\",\")[1];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 440,
+        "wires": [
+            [
+                "689f38f26a9725f3",
+                "0e0a748d5e22031c",
+                "5378537f83a19759"
+            ]
+        ]
+    },
+    {
+        "id": "689f38f26a9725f3",
+        "type": "debug",
+        "z": "d65d26390267d08c",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "1c4e0dca40a215ac",
+        "type": "ui_gauge",
+        "z": "d65d26390267d08c",
+        "name": "",
+        "group": "group1",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Servo 1",
+        "label": "degree",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "180",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": true,
+        "className": "",
+        "x": 640,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "0e0a748d5e22031c",
+        "type": "ui_gauge",
+        "z": "d65d26390267d08c",
+        "name": "",
+        "group": "group1",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Servo 2",
+        "label": "degree",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "180",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": true,
+        "className": "",
+        "x": 640,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "f5e0b34f63087818",
+        "type": "ui_text",
+        "z": "d65d26390267d08c",
+        "group": "group1",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Serial",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 390,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "053fc9683ca82a70",
+        "type": "ui_button",
+        "z": "d65d26390267d08c",
+        "name": "",
+        "group": "group1",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Home Position",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "home",
+        "topicType": "str",
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "801c65e6d1a4a622"
+            ]
+        ]
+    },
+    {
+        "id": "group1",
+        "type": "ui_group",
+        "name": "SCARA Control",
+        "tab": "tab1",
+        "order": 1,
+        "disp": true,
+        "width": 6
+    },
+    {
+        "id": "54d7d3294c155225",
+        "type": "serial-port",
+        "serialport": "/dev/ttyACM0",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "serial-conf",
+        "type": "serial-port",
+        "name": "",
+        "serialport": "/dev/ttyACM0",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "false",
+        "responsetimeout": ""
+    },
+    {
+        "id": "tab1",
+        "type": "ui_tab",
+        "name": "Robot UI",
+        "icon": "dashboard",
+        "order": 1
+    }
+]

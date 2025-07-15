@@ -1,0 +1,1 @@
+# Gyartasautomatizalasi_folyamatok
